@@ -1,0 +1,18 @@
+# Example URLs file for YouTube Downloader
+# Lines starting with # are comments and will be ignored
+# Add one YouTube URL per line
+
+# Example single video (uncomment to use):
+# https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+# Example multiple videos:
+# https://www.youtube.com/watch?v=VIDEO_ID1
+# https://www.youtube.com/watch?v=VIDEO_ID2
+# https://www.youtube.com/watch?v=VIDEO_ID3
+
+# You can also use short URLs:
+# https://youtu.be/VIDEO_ID
+
+# Usage:
+# python youtube_dl_cli.py -f urls_example.txt
+# python youtube_dl_cli.py -f urls_example.txt -a  # for audio only
