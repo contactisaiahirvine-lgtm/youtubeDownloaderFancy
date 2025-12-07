@@ -86,20 +86,26 @@ function init() {
 
   // IPC Listeners
   ipcRenderer.on('url-added', (event, urlData) => {
+    console.log('[Main] URL added:', urlData);
     addDownload(urlData);
   });
 
   ipcRenderer.on('download-progress', (event, progressData) => {
+    console.log('[Main] Download progress:', progressData);
     updateDownloadProgress(progressData);
   });
 
   ipcRenderer.on('download-complete', (event, data) => {
+    console.log('[Main] Download complete:', data);
     markDownloadComplete(data.id);
   });
 
   ipcRenderer.on('download-error', (event, data) => {
+    console.error('[Main] Download error:', data);
     markDownloadError(data.id, data.error);
   });
+
+  console.log('[Main] Renderer initialized, settings:', settings);
 }
 
 function updateFormatOptions() {
@@ -142,6 +148,8 @@ function updateFormatOptions() {
 }
 
 function addDownload(urlData) {
+  console.log('[Main] Adding download:', urlData);
+
   const download = {
     id: Date.now().toString(),
     url: urlData.url,
@@ -154,14 +162,17 @@ function addDownload(urlData) {
     settings: { ...settings }
   };
 
+  console.log('[Main] Created download object:', download);
   downloads.push(download);
 
   // Update audio track options if available
   if (urlData.videoInfo && urlData.videoInfo.audioTracks) {
+    console.log('[Main] Updating audio track options:', urlData.videoInfo.audioTracks);
     updateAudioTrackOptions(urlData.videoInfo.audioTracks);
   }
 
   renderDownloads();
+  console.log('[Main] Starting download for ID:', download.id);
   startDownload(download);
 }
 
@@ -285,8 +296,13 @@ function updateStats() {
 }
 
 async function startDownload(download) {
+  console.log('[Main] startDownload called for:', download.id);
+
   const downloadObj = downloads.find(d => d.id === download.id);
-  if (!downloadObj) return;
+  if (!downloadObj) {
+    console.error('[Main] Download object not found for ID:', download.id);
+    return;
+  }
 
   downloadObj.status = 'downloading';
   renderDownloads();
@@ -304,8 +320,11 @@ async function startDownload(download) {
       embedMetadata: downloadObj.settings.embedMetadata
     };
 
+    console.log('[Main] Invoking start-download with options:', downloadOptions);
     await ipcRenderer.invoke('start-download', downloadOptions);
+    console.log('[Main] start-download invoked successfully');
   } catch (error) {
+    console.error('[Main] Error in startDownload:', error);
     markDownloadError(download.id, error.message);
   }
 }

@@ -108,30 +108,46 @@ ipcMain.handle('select-output-folder', async () => {
 
 // Get video info from Python backend
 ipcMain.handle('get-video-info', async (event, url) => {
+  console.log('[Main Process] Getting video info for:', url);
+
   return new Promise((resolve, reject) => {
     const bridgePath = path.join(__dirname, 'youtubeDownloader', 'electron_bridge.py');
+    console.log('[Main Process] Bridge path:', bridgePath);
+
     const python = spawn('python3', [bridgePath, 'get-info', url]);
+    console.log('[Main Process] Python process spawned with PID:', python.pid);
 
     let dataString = '';
     let errorString = '';
 
     python.stdout.on('data', (data) => {
-      dataString += data.toString();
+      const chunk = data.toString();
+      console.log('[Main Process] Python stdout:', chunk);
+      dataString += chunk;
     });
 
     python.stderr.on('data', (data) => {
-      errorString += data.toString();
+      const chunk = data.toString();
+      console.error('[Main Process] Python stderr:', chunk);
+      errorString += chunk;
     });
 
     python.on('close', (code) => {
+      console.log('[Main Process] Python process closed with code:', code);
+      console.log('[Main Process] Data received:', dataString);
+
       try {
         const info = JSON.parse(dataString.trim());
         if (info.success) {
+          console.log('[Main Process] Video info retrieved successfully:', info.title);
           resolve(info);
         } else {
+          console.error('[Main Process] Video info fetch failed:', info.error);
           reject(new Error(info.error || 'Failed to get video info'));
         }
       } catch (err) {
+        console.error('[Main Process] Failed to parse JSON:', err);
+        console.error('[Main Process] Raw data:', dataString);
         reject(new Error(errorString || 'Failed to parse video info'));
       }
     });
@@ -140,6 +156,8 @@ ipcMain.handle('get-video-info', async (event, url) => {
 
 // Start download
 ipcMain.handle('start-download', async (event, downloadOptions) => {
+  console.log('[Main Process] Starting download with options:', downloadOptions);
+
   return new Promise((resolve, reject) => {
     const bridgePath = path.join(__dirname, 'youtubeDownloader', 'electron_bridge.py');
     const downloadId = Date.now().toString();
@@ -156,7 +174,11 @@ ipcMain.handle('start-download', async (event, downloadOptions) => {
       embedMetadata: downloadOptions.embedMetadata !== false
     };
 
+    console.log('[Main Process] Bridge options:', bridgeOptions);
+    console.log('[Main Process] Download ID:', downloadId);
+
     const python = spawn('python3', [bridgePath, 'download', JSON.stringify(bridgeOptions)]);
+    console.log('[Main Process] Python download process spawned with PID:', python.pid);
 
     let outputBuffer = '';
 

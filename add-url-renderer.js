@@ -45,11 +45,16 @@ addBtn.addEventListener('click', () => {
     return;
   }
 
+  console.log('[Add URL] Submitting URL:', url);
+  console.log('[Add URL] Video info:', currentVideoInfo);
+
   // Send URL data to main window
   ipcRenderer.send('add-url-submit', {
     url: url,
     videoInfo: currentVideoInfo
   });
+
+  console.log('[Add URL] URL submitted to main window');
 });
 
 // Auto-enable add button when URL is entered
@@ -68,20 +73,25 @@ urlInput.addEventListener('keydown', (e) => {
 
 async function fetchVideoInfo(url) {
   try {
+    console.log('[Add URL] Fetching video info for:', url);
     hideError();
     showLoading();
 
     // Call the Python backend via IPC to get real video info
     const info = await ipcRenderer.invoke('get-video-info', url);
+    console.log('[Add URL] Received video info:', info);
 
     if (!info.success) {
+      console.error('[Add URL] Video info fetch failed:', info.error);
       throw new Error(info.error || 'Failed to get video info');
     }
 
     currentVideoInfo = info;
+    console.log('[Add URL] Displaying video info with thumbnail:', info.thumbnail);
     displayVideoInfo(info);
 
   } catch (error) {
+    console.error('[Add URL] Error in fetchVideoInfo:', error);
     hideLoading();
     showError('Failed to fetch video info: ' + error.message);
   }
