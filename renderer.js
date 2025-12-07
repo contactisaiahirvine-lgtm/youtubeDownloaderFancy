@@ -187,12 +187,14 @@ function renderDownloads() {
 
   downloadList.innerHTML = downloads.map(download => {
     const title = download.videoInfo?.title || 'Loading...';
-    const thumbnail = download.videoInfo?.thumbnail || 'https://via.placeholder.com/160x90.png?text=Thumbnail';
+    // Fallback to SVG placeholder if no thumbnail
+    const placeholderSvg = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="160" height="90" viewBox="0 0 160 90"%3E%3Crect fill="%23e0e0e0" width="160" height="90"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="12" fill="%23999"%3EThumbnail%3C/text%3E%3C/svg%3E';
+    const thumbnail = download.videoInfo?.thumbnail || placeholderSvg;
 
     return `
       <div class="download-item" data-id="${download.id}">
         <div class="download-thumbnail">
-          <img src="${thumbnail}" alt="Thumbnail">
+          <img src="${thumbnail}" alt="Thumbnail" onerror="this.src='${placeholderSvg}'">
           <div class="download-status-badge ${download.status}">
             ${getStatusIcon(download.status)}
           </div>

@@ -12,7 +12,8 @@ function createMainWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true
+      enableRemoteModule: true,
+      webSecurity: false  // Allow loading images from YouTube
     },
     icon: path.join(__dirname, 'assets/icon.png')
   });
@@ -37,15 +38,17 @@ function createAddUrlWindow() {
 
   addUrlWindow = new BrowserWindow({
     width: 600,
-    height: 400,
+    height: 600,
+    minHeight: 400,
     parent: mainWindow,
     modal: true,
     show: false,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
+      contextIsolation: false,
+      webSecurity: false  // Allow loading images from YouTube
     },
-    resizable: false,
+    resizable: true,
     minimizable: false,
     maximizable: false
   });

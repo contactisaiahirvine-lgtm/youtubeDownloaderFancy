@@ -110,18 +110,28 @@ class ElectronBridge:
                 thumbnail = None
                 if 'thumbnails' in info and info['thumbnails']:
                     # Get the highest quality thumbnail
-                    thumbnails = sorted(
-                        info['thumbnails'],
-                        key=lambda x: x.get('preference', 0) or 0,
-                        reverse=True
-                    )
-                    thumbnail = thumbnails[0]['url'] if thumbnails else None
+                    # Try to get maxresdefault or high quality thumbnail
+                    thumbnails = info['thumbnails']
+
+                    # Prefer higher resolution thumbnails
+                    for thumb in reversed(thumbnails):
+                        if thumb.get('url'):
+                            thumbnail = thumb['url']
+                            break
+
+                    # Fallback to any thumbnail
+                    if not thumbnail and thumbnails:
+                        thumbnail = thumbnails[-1].get('url')
+
+                # Fallback to thumbnail field if thumbnails list didn't work
+                if not thumbnail:
+                    thumbnail = info.get('thumbnail')
 
                 return {
                     'success': True,
                     'title': info.get('title', 'Unknown Title'),
                     'duration': info.get('duration', 0),
-                    'thumbnail': thumbnail or info.get('thumbnail'),
+                    'thumbnail': thumbnail,
                     'uploader': info.get('uploader', 'Unknown'),
                     'view_count': info.get('view_count', 0),
                     'description': info.get('description', '')[:200],  # First 200 chars
@@ -129,6 +139,10 @@ class ElectronBridge:
                 }
 
         except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            sys.stderr.write(f"Error getting video info: {error_details}\n")
+            sys.stderr.flush()
             return {
                 'success': False,
                 'error': str(e)
@@ -260,11 +274,19 @@ class ElectronBridge:
                     filename = Path(filename).with_suffix(f'.{format_type}')
                 else:
                     filename = ydl.prepare_filename(info)
+                    # If merge_output_format is specified, update extension
+                    if format_type and format_type != 'mp4':
+                        filename = Path(filename).with_suffix(f'.{format_type}')
 
                 self.send_complete(str(filename))
 
         except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
             self.send_error('Download failed', str(e))
+            # Also send to stderr for debugging
+            sys.stderr.write(f"Download error: {error_details}\n")
+            sys.stderr.flush()
 
 
 def main():

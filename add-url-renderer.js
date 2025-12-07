@@ -100,8 +100,26 @@ function hideLoading() {
 function displayVideoInfo(info) {
   hideLoading();
 
-  previewTitle.textContent = info.title;
-  previewThumbnail.src = info.thumbnail;
+  previewTitle.textContent = info.title || 'Unknown Title';
+
+  // Set thumbnail with error handling
+  if (info.thumbnail) {
+    previewThumbnail.src = info.thumbnail;
+    previewThumbnail.style.display = 'block';
+
+    // Add error handler for failed thumbnail loads
+    previewThumbnail.onerror = function() {
+      this.style.display = 'none';
+      console.error('Failed to load thumbnail:', info.thumbnail);
+    };
+
+    // Reset previous error state
+    previewThumbnail.onload = function() {
+      this.style.display = 'block';
+    };
+  } else {
+    previewThumbnail.style.display = 'none';
+  }
 
   // Display audio tracks if available
   if (info.audioTracks && info.audioTracks.length > 1) {
