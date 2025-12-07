@@ -289,31 +289,23 @@ async function startDownload(download) {
   downloadObj.status = 'downloading';
   renderDownloads();
 
-  // Simulate download progress
-  // In production, this would communicate with the Python backend
-  simulateDownload(download.id);
-}
+  try {
+    // Call the Python backend to start the real download
+    const downloadOptions = {
+      url: downloadObj.url,
+      outputFolder: settings.outputFolder,
+      format: downloadObj.settings.format,
+      quality: downloadObj.settings.quality,
+      downloadType: downloadObj.settings.downloadType,
+      audioTrack: downloadObj.settings.audioTrack,
+      embedThumbnail: downloadObj.settings.embedThumbnail,
+      embedMetadata: downloadObj.settings.embedMetadata
+    };
 
-function simulateDownload(downloadId) {
-  const download = downloads.find(d => d.id === downloadId);
-  if (!download) return;
-
-  let progress = 0;
-  const interval = setInterval(() => {
-    progress += Math.random() * 10;
-    if (progress >= 100) {
-      progress = 100;
-      clearInterval(interval);
-      markDownloadComplete(downloadId);
-    }
-
-    updateDownloadProgress({
-      id: downloadId,
-      progress: Math.floor(progress),
-      speed: `${(Math.random() * 5 + 1).toFixed(1)} MB/s`,
-      eta: `${Math.floor(Math.random() * 30 + 10)}s`
-    });
-  }, 500);
+    await ipcRenderer.invoke('start-download', downloadOptions);
+  } catch (error) {
+    markDownloadError(download.id, error.message);
+  }
 }
 
 function updateDownloadProgress(progressData) {

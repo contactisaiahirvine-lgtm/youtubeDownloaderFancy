@@ -60,6 +60,20 @@ A clean, focused interface for adding YouTube URLs with video preview.
    cd ..
    ```
 
+4. **Verify Python setup** (Optional but recommended)
+   ```bash
+   # Check Python version
+   python3 --version
+   # Should show Python 3.7 or higher
+
+   # Check FFmpeg
+   ffmpeg -version
+
+   # Test the bridge script
+   python3 youtubeDownloader/electron_bridge.py get-info "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+   # Should return JSON with video info
+   ```
+
 ## Usage
 
 ### Running the Application
@@ -163,6 +177,7 @@ youtubeDownloaderFancy/
 ├── styles.css                # Global styles
 ├── package.json              # Node.js dependencies
 ├── youtubeDownloader/        # Python backend
+│   ├── electron_bridge.py    # Electron-Python bridge (JSON communication)
 │   ├── youtube_downloader.py # YouTube download logic
 │   ├── youtube_dl_cli.py     # CLI interface
 │   └── requirements.txt      # Python dependencies
@@ -182,8 +197,13 @@ youtubeDownloaderFancy/
 ### IPC Communication
 
 The app uses Electron's IPC (Inter-Process Communication) to communicate between:
-- Renderer process (UI) ↔ Main process (Electron)
-- Main process ↔ Python backend (via child processes)
+- **Renderer process (UI) ↔ Main process (Electron)**: Uses Electron IPC for UI events
+- **Main process ↔ Python backend**: Spawns Python child processes that communicate via JSON
+
+The `electron_bridge.py` script acts as a bridge, receiving commands from Electron and returning:
+- Video information (title, thumbnail, duration, available audio tracks)
+- Real-time download progress (percentage, speed, ETA)
+- Completion/error status
 
 ## Troubleshooting
 

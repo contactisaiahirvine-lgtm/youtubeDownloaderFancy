@@ -71,27 +71,15 @@ async function fetchVideoInfo(url) {
     hideError();
     showLoading();
 
-    // In a real implementation, this would call the Python backend
-    // For now, we'll simulate it with a timeout
+    // Call the Python backend via IPC to get real video info
+    const info = await ipcRenderer.invoke('get-video-info', url);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    if (!info.success) {
+      throw new Error(info.error || 'Failed to get video info');
+    }
 
-    // Mock video info - in production this comes from yt-dlp
-    const mockInfo = {
-      title: 'Sample Video Title',
-      thumbnail: 'https://via.placeholder.com/320x180.png?text=Video+Thumbnail',
-      duration: 245,
-      audioTracks: [
-        { id: 'auto', language: 'Auto (Default)', description: 'Default audio track' },
-        { id: 'en', language: 'English', description: 'English audio' },
-        { id: 'ru', language: 'Russian', description: 'Russian audio' },
-        { id: 'es', language: 'Spanish', description: 'Spanish audio' }
-      ]
-    };
-
-    currentVideoInfo = mockInfo;
-    displayVideoInfo(mockInfo);
+    currentVideoInfo = info;
+    displayVideoInfo(info);
 
   } catch (error) {
     hideLoading();
