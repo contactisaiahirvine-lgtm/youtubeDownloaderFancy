@@ -27,6 +27,34 @@ All components now have detailed logging with prefixes:
 - `[Add URL]` - Add URL modal logs
 - `[Python]` - Python bridge script logs
 
+### 3. Clear Cache if Seeing Old Errors
+
+If you see errors referencing old code (like `via.placeholder.com`):
+
+**Stop the app and clear cache:**
+
+```bash
+# Stop the app (Ctrl+C)
+
+# Clear Electron cache (Linux/macOS)
+rm -rf ~/.config/youtube-downloader-fancy
+
+# Clear Electron cache (macOS alternative)
+rm -rf ~/Library/Application\ Support/youtube-downloader-fancy
+
+# Clear Electron cache (Windows)
+# Delete: %APPDATA%\youtube-downloader-fancy
+
+# Restart the app
+npm run dev
+```
+
+**Or use the verification script:**
+
+```bash
+./verify.sh
+```
+
 ## Common Issues and Solutions
 
 ### Issue 1: "Add URL" Button Not Responding
