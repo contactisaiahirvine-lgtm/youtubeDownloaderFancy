@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add URL</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    .modal-container {
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 20px;
+      color: #333;
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .url-input-group {
+      margin-bottom: 16px;
+    }
+
+    .url-input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .url-input-group textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .url-input-group textarea:focus {
+      outline: none;
+      border-color: #4CAF50;
+    }
+
+    .url-input-group small {
+      display: block;
+      margin-top: 6px;
+      color: #777;
+      font-size: 12px;
+    }
+
+    .preview-section {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .preview-section.show {
+      display: block;
+    }
+
+    .preview-title {
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .preview-thumbnail {
+      width: 100%;
+      max-width: 320px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .loading-indicator {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #4CAF50;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error-message {
+      padding: 12px;
+      background: #ffebee;
+      color: #c62828;
+      border-radius: 6px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #45a049;
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #e0e0e0;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #d0d0d0;
+    }
+
+    .btn-info {
+      background: #2196F3;
+      color: white;
+      margin-left: auto;
+    }
+
+    .btn-info:hover {
+      background: #1976D2;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>Add YouTube URL</h2>
+    </div>
+
+    <div class="modal-body">
+      <div class="url-input-group">
+        <label for="urlInput">YouTube URL</label>
+        <textarea
+          id="urlInput"
+          placeholder="Paste YouTube URL here...&#10;Example: https://www.youtube.com/watch?v=dQw4w9WgXcQ&#10;&#10;You can also paste multiple URLs, one per line."
+        ></textarea>
+        <small>Supports single videos, playlists, and multiple URLs</small>
+      </div>
+
+      <div id="errorMessage" class="error-message"></div>
+
+      <div id="previewSection" class="preview-section">
+        <div class="loading-indicator" id="loadingIndicator">
+          <div class="spinner"></div>
+          <div>Loading video info...</div>
+        </div>
+        <div id="previewContent" style="display: none;">
+          <div class="preview-title" id="previewTitle"></div>
+          <img id="previewThumbnail" class="preview-thumbnail" alt="Video thumbnail">
+          <div id="audioTracksInfo"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button id="getInfoBtn" class="btn btn-info">Get Info</button>
+      <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+      <button id="addBtn" class="btn btn-primary" disabled>Add to Downloads</button>
+    </div>
+  </div>
+
+  <script src="add-url-renderer.js"></script>
+</body>
+</html>

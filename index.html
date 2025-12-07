@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Downloader Fancy</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <h1>📹 YouTube Downloader</h1>
+      <button id="addUrlBtn" class="btn btn-primary">
+        <span class="icon">➕</span>
+        Add URL
+      </button>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="settings-section">
+          <h2>Settings</h2>
+
+          <!-- Output Folder -->
+          <div class="setting-group">
+            <label>Output Folder</label>
+            <div class="folder-selector">
+              <input type="text" id="outputFolder" readonly placeholder="Select folder...">
+              <button id="selectFolderBtn" class="btn btn-secondary">Browse</button>
+            </div>
+            <small id="outputFolderPath" class="hint"></small>
+          </div>
+
+          <!-- Download Type -->
+          <div class="setting-group">
+            <label>Download Type</label>
+            <select id="downloadType">
+              <option value="video">Video + Audio</option>
+              <option value="audio">Audio Only</option>
+            </select>
+          </div>
+
+          <!-- Quality -->
+          <div class="setting-group">
+            <label>Quality</label>
+            <select id="quality">
+              <option value="best">Best Available</option>
+              <option value="2160p">4K (2160p)</option>
+              <option value="1440p">2K (1440p)</option>
+              <option value="1080p">1080p (Full HD)</option>
+              <option value="720p">720p (HD)</option>
+              <option value="480p">480p (SD)</option>
+            </select>
+          </div>
+
+          <!-- Format -->
+          <div class="setting-group">
+            <label>Format</label>
+            <select id="format">
+              <option value="mp4">MP4</option>
+              <option value="webm">WebM</option>
+              <option value="mkv">MKV</option>
+            </select>
+          </div>
+
+          <!-- Advanced Settings Toggle -->
+          <div class="setting-group">
+            <button id="advancedToggle" class="btn btn-link">
+              <span id="advancedToggleIcon">▶</span>
+              Advanced Settings
+            </button>
+          </div>
+
+          <!-- Advanced Settings (Hidden by default) -->
+          <div id="advancedSettings" class="advanced-settings" style="display: none;">
+            <div class="setting-group">
+              <label>Audio Track</label>
+              <select id="audioTrack">
+                <option value="auto">Auto (Default)</option>
+              </select>
+              <small class="hint">Available after adding URL</small>
+            </div>
+
+            <div class="setting-group">
+              <label>
+                <input type="checkbox" id="embedThumbnail">
+                Embed Thumbnail
+              </label>
+            </div>
+
+            <div class="setting-group">
+              <label>
+                <input type="checkbox" id="embedMetadata">
+                Embed Metadata
+              </label>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Download List -->
+      <main class="download-area">
+        <div class="download-header">
+          <h2>Downloads</h2>
+          <div class="download-stats">
+            <span id="activeDownloads">0 active</span>
+            <span class="separator">•</span>
+            <span id="completedDownloads">0 completed</span>
+          </div>
+        </div>
+
+        <div id="downloadList" class="download-list">
+          <div class="empty-state">
+            <div class="empty-icon">📥</div>
+            <p>No downloads yet</p>
+            <small>Click "Add URL" to start downloading</small>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
